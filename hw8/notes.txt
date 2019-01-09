@@ -1,0 +1,44 @@
+Anwesh Joshi
+
+For 5.8, I simply used assoc to check if a label already exists in
+labels when calling the receive in extract-labels. If it does, it
+gives out an error regarding the duplicate label.  5.9 was the easiest
+one as all I had to do was check if there is a label present while
+doing the make-operation-exp procedure.
+
+5.19 was long, even though it was not the hardest assignment, there
+was a lot of code following needed again. I had to figure out things
+regarding the information that would be needed to create a breakpoint.
+As given in the hint, I used label name and offset but I also needed
+to know which instruction is really going to be breakpoint one. For
+that I had to modify extract-label so that I can keep count of all the
+instruction in the code with their indices. After that I kept a list
+of breakpoints so that I know the instruction where the breakpoint is
+set up and I halt when running the machine.
+
+Due to tail recursive nature of execute method, just removing the tail
+recursive call stops the code which can be contunued with
+proceed-machine method which calls the execute method again but only
+after it is halted.
+
+Cancelling all the breakpoint is pretty simple with my way as I just
+set the breakpoint list to be empty. The issue I had was while
+removing the individual breakpoints. For this I introduced remove
+method such that for any label and offset that I want to remove as a
+breakpoint, I first create a breakpoint (do not insert it into the
+breakpoint list though) as my make-breakpoint returns the index of the
+instruction. Through this I just match this instruction index with all
+the available breakpoints in breakpoint list and remove whichever
+matches it. This way I don't have to worry about which label and offset
+are used as the instruction index for entire machine is same.
+
+I also had issue when I put in 2 breakpoints at the same instruction
+as I couldnot proceed my machine at all i.e. I would hit the
+alternative breakpoint everytime I would try to proceed through 1
+breakpoint. FOr this I just introduced a new procedure member which
+only allows 1 breakpoint at 1 instruction, not depending on the label
+name or offset.
+
+I used my own expt-machine that was used in earlier homework for
+testing as it had more labels and I could check and play with
+registers by setting up breakpoints at various points.

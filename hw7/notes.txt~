@@ -1,0 +1,74 @@
+Anwesh Joshi
+Assignment 7
+
+Define-variable need not be changed, as delay and reference 
+tag form an object with that particular variable. One variable
+is in reference to another variable and hence no need to change
+the actual value.
+
+
+---------------------------------------------------------------
+
+
+
+I started with the second part of the problem. It was comparatively
+easier to solve after going through the lecture note. By using two
+continuation tag (jumpwithin and jumpout). jumpwithin is used to jump
+with in the code while jumpout exits the program (like scheme) or at
+when evaluating eof object. The continuation is saved in (s450) to
+output the prompt or exit the code.
+
+For 1st part, I have similar strategy to deal with three different tag
+inputs as delayed, reference and dynamic. lookup-value is used to
+compute the output the particular result but I had to override that as
+I dont want to obtain result right away in this case (for delay and
+reference), so I create an object with tag thunk and reference and
+pass it to xapply where the extra stuff like delay/reference/dynamic
+are removed when dealing with each parameter during xtend environment.
+
+For delay, I create a thunk object with expression and environment.
+The thunk is only evaluated when computing the value of partcular
+variable whose value is that thunk which is done in lookup-variable
+-value phase. Evaluation is simple i.e. call xeval with the expression
+and environment from the thunk.
+
+Reference is a lot similar to delay as they are handled in similar
+manner in terms of evaluating and storing as object. The only
+difference is in the set-variable-value phase, where we have to change
+the value for variable which may again be a reference to some other
+variable. Thus set-variable-value is called recusively until the main
+value is changed which in turn would change value for all other
+variable that is referencing to that particular variable.
+
+Dynamic was a lot difficult to understand until it was discussed in
+the class. After that it turned out as one of the simples one as we
+dont have to create an object for each dynamic tag in this case and
+evaluating is pretty simple by just calling xeval on the variable
+passed and the dynamic environment. This dynamic environment, called
+the-dynamic-environment is a new set of environment only created for
+dynamic tagged variables. I used xtend envronent itself to add a frame
+to dynamic environment and removed this frame from the dynamic
+environment as soon as the computation on this frame is completed.
+The careful part was to add the same frame to both the native as well
+as dynamic environment rather than creating two separate frames.
+
+Despite not having to write large amount of code, there was lot of
+thinking needed in this assignment. More than thinking, the code
+was to be tracked around in different places such as while not having
+to compute/evaluate an expression/variable right away.
+
+I implemented the stream with delay tag sucj that I would create thunk
+when doing cons-stream on cdr of expression. The car-stream is car of
+the stream where as stream-cdr returns the thunkm i.e. evaluates
+the thunk.
+
+To test these functions I ran all the code provided and they gave the
+required solution. The only place I was confused was when I created
+integers using cons-stream and when to watch what it looks like,
+it crashed the (s450). I didnot create anything good as in PROMISE
+that we see in UMB Scheme. So I think it tries to evaluate again
+and again which means there are environment after same environment in
+the code causing it to crash ( I might be wrong). I tried to change
+user-print to print something similar for thunk objects but couldnot
+implement those in the time period. I got it to work for stream-cdr
+easily.

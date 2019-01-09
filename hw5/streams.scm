@@ -1,0 +1,80 @@
+;;; file: pi_header.scm // nope
+;;;
+;;; This should be included (textually) at the top of pi.scm.  All
+;;; these definitions are from the textbook.
+
+;;; cons-stream is already defined (by a macro, as a special form) in
+;;; UMB Scheme
+
+(define stream-car car)
+(define (stream-cdr stream) (force (cdr stream)))
+(define stream-null? null?)
+(define the-empty-stream '())
+
+(define (stream-foreach f x)
+  (if (stream-null? x)
+      'done
+      (begin (f (stream-car x))
+             (stream-foreach f (stream-cdr x)))))
+
+(define (stream-filter pred stream)
+  (cond ((stream-null? stream) the-empty-stream)
+        ((pred (stream-car stream))
+         (cons-stream (stream-car stream)
+                      (stream-filter pred (stream-cdr stream))))
+        (else (stream-filter pred (stream-cdr stream)))))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;; 1
+;; display item until nth item keep track of count by reducing 1 each
+ ;; time after display
+(define (display-n stream n)
+  (cond ((not (= n 0))
+         (display (stream-car stream))
+         (newline)
+         (display-n (stream-cdr stream) (- n 1)))))
+         
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; 2
+
+;; stream-map procedure
+
+(define (stream-map proc . argstreams)
+  (if (stream-null? (car argstreams))
+      the-empty-stream
+      (cons-stream
+       (apply proc (map stream-car argstreams))
+       (apply stream-map
+              (cons proc (map stream-cdr argstreams))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;; 3
+
+;; played around and tested these
+(define ones (cons-stream 1 ones))
+(define (add-streams s1 s2)
+  (stream-map + s1 s2))
+(define integers (cons-stream 1 (add-streams ones integers)))
+
+
+(define (no235? x) ;;notdivisible by 2,3 and 5
+    (not (OR (= 0 (remainder x 2)) (= 0 (remainder x 3)) (= 0 (remainder x
+5)))))
+    
+;; filter above predicate on integers stream
+(define not-div235
+  (stream-filter (lambda (x) (no235? x))
+                 integers))
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

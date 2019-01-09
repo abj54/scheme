@@ -1,0 +1,80 @@
+Questions:
+
+1. In a dag, when one node is traversed, we never go back to it since
+it is acyclic i.e. never form a cycle. So total number of paths get
+reduced as number of nodes to traverse gets reduced when a node is
+once visited.
+
+2. There are total 256 different paths. It is becoming twice after
+every step.
+
+
+
+ESSAY:
+
+Part - I : naive-path
+
+Part I was fairly simple as I followed the pseudocode provided
+closely.  I had trouble traversing the whole children list though. But
+introducing new functions definitely helped me. (find-cost) is the
+function I used that computes cost from a node to end through all of
+its children. The three functions, (find-cost), (singecost) and
+(naive-cost) call each other and doing that seemed pretty different
+than what we usually do.
+
+For a smaller path, it definitely doesnot take long but for the larger
+file (provided by Professor) it definitely took more time to solve.
+And hence we got to memoization part.
+
+
+Part - II: path
+
+Part II can pretty much be said as the upgraded and updated version of
+Part I. I used most of the same solution from part I for this problem.
+But I introduced more tables to make computaion faster and easier.
+Firstly, I introduced a table cost-table, as soon as I get a minimum
+cost from any node to end i.e. naive-cost for any node, I add that
+node and cost to the table. Similarly, if I have to compute naive-cost
+for any node, I check cost-table for that node to see if it has
+already been computed, and if it is, I just return that. This saves a
+lot of time as unlike in part I, no recomputation for the best cost
+from any node to end is needed again.
+
+Getting just the minimum cost wasnot a huge problem. But I had a lot
+of issues trying to compute the cheapest path. First of all, while
+working on the small graph, I made a lot of wrong assumptions. The
+first solution I thought was:
+ Check the cost table. Since a node can only go to its child, find
+child with minimum cost for any particular node. I ran this code from
+start until end and did get a solution. But a node's child may also be
+the child of it child and get the minimum value from there. So I
+didnot think that a node would have two edges.
+
+Similarly I tried it with a recursive table i.e. build a table from
+end to start as well. I tried the above method on it, which again seem
+to work on small graph but messed up on the bigger one as many
+in-between nodes are there with many edges. Also, there are nodes with
+less cost to end and I accepted them on the cheapest path but they
+were not connected to start at all and hence I had no solution.
+
+Finally, I got the solution by doing some computation. I rearranged by
+naive-cost so that it took two nodes i.e. one initial and one final
+node.  Then I filled up my cost-table from start to end and end to
+start. So I had two sub-table in my cost-table:
+
+1. table with minimum cost from all nodes to start
+2. table with minimum cost from all nodes to end
+
+With this, for any node from start, I took it and added it with the
+cost from another subtable, and if they result it total cost from
+start to end, then it is in the cheapest path or else it is not. I
+finally got the path that I just appended with total-cost, start and
+end (at end), and returned it.
+
+This problem was a lot harder than first part and I think it is also
+due to the time constraint as basically a week for this problem was a
+short time.  If I had more time, I would want to incorporate the
+cheapest path traversal while computing the cheapest path itself. I
+don't know if it can be done with the kind of solution I have at the
+moment but if I am able to save an entire list of nodes from start to
+end with their cost, I may be able to compute it.

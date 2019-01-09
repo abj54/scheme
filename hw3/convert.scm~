@@ -1,0 +1,155 @@
+;; Anwesh Joshi
+;; HW 3
+
+;; read-file produces a list whose elements are the expressions in the
+;; file.
+
+(define (read-file)
+  (let ((expr (read)))
+    (if (eof-object? expr)
+        '()
+        (cons expr (read-file)))))
+
+;; Here we go:  read in the database.
+
+(define source (with-input-from-file "units.dat" read-file))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;mini functions
+
+(define (inbase? unit) ;;unit = (kg 1) (mi 2)
+  (not(assoc (car unit) source)))
+
+(define (getbigthing unit)
+  ;;(getbigthing '(n 1)) --> (n (1 (kg 1) (m 1) (sec -2)))
+  (assoc (car unit) source))
+
+;;increases power of each unit in liste by power
+(define (golist liste power)
+  ;;(golist '((n 1) (joule 3)) 2) --> ((n 2) (joule 6))
+  (cond ((null? liste) '())
+        (else
+         (cons (list (caar liste)
+                     (* (cadar liste) power))
+                   (golist (cdr liste) power)))))
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;helpful functions for complex operations
+
+;; (getbaselist '((n 1) (kg 2)))-->
+;((1 (kg 1) (m 1) (sec -2)) (1 (kg 2)))
+(define (getbaselist unitlist) ;;converts whole list of units into
+                             ;;baseunits by going through each unit
+
+  (define (getbaseunit unit) ;;for one unit
+    (cond ((not(inbase? unit))
+           (let ((bigthing (getbigthing unit))
+                 (power (cadr unit))
+                 (ulist (cadr (getbigthing unit))))
+             (append (list (expt (car ulist) power))
+                     (golist (cdr ulist) power) )))
+          (else (cons 1 (list unit)))))
+  (cond ((null? unitlist) '())
+        (else
+         (cons (getbaseunit (car unitlist))
+               (getbaselist (cdr unitlist))))))
+ 
+;;(getvalue 'kg '(1 (kg 0) (m 0) (sec 0))) -- >0
+; returns the power for each baseunit in the finallist
+(define (getvalue unit list)
+  (cond ((equal? 'sec unit) (car (cdr (cadddr list))))
+        ((equal? 'kg unit) (cadadr list))
+        ((equal? 'm unit) (car (cdaddr list)))
+         (else (car list))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;this list will be used to get final baselist
+;; with only baselist and quanitity
+
+(define finallist '(1 (kg 0) (m 0) (sec 0)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;gives the finalbaselist on basis of all units in a list that has
+;; been converted to baselist such that completely updated finallist
+;; is obtained
+(define (unify baselist finallist)
+  ;;(unify '((1 (kg 1) (m 1) (sec -2)) (1 (kg 2)) (23 (sec -9)))
+  ;;finallist) --> (23 (kg 3) (m 1) (sec -11))
+
+  
+  ;;updateallist works on sublist of units for derived units
+  
+  (define (updatealllist listi mlist)
+
+    ;;updatelist works on just one unit 
+    ;;(updatelist listi '(1 (kg 5))) --> (1 (kg 5) (m 0) (sec 0))
+    (define (updatelist unitf listi ) ;unitf) ;;listi is finallist
+      (let ((quantity (car unitf))
+            (unit (caadr unitf))
+            (power (cadadr unitf)))
+        (cond ((equal? 'kg unit)
+               (list (* (car listi) quantity)
+                   (list 'kg (+ (getvalue 'kg listi) power))
+                   (list 'm (getvalue 'm listi))
+                   (list 'sec (getvalue 'sec listi))))
+            ((equal? 'm unit)
+             (list (* (car listi) quantity)
+                   (list 'kg (getvalue 'kg listi))
+                   (list 'm  (+ (getvalue 'm listi) power))
+                   (list 'sec (getvalue 'sec listi))))
+            ((equal? 'sec unit)
+             (list (* (car listi) quantity)
+                   (list 'kg (getvalue 'kg listi))
+                   (list 'm (getvalue 'm listi))
+                   (list 'sec
+                         (+ (getvalue 'sec listi) power)))))) )
+  (cond ((not (null? (cddr mlist)))
+         (cond ((not (null? (cdddr mlist)))
+               (updatelist (list 1 (cadddr mlist))
+                           (updatelist (list 1 (caddr mlist))
+                                (updatelist
+                                   (list (car mlist) (cadr mlist))
+                                      listi))))
+               (else (updatelist (list 1 (caddr mlist))
+                                 (updatelist (list (car mlist)
+                                         (cadr mlist)) listi)))))
+        (else (updatelist (list (car mlist) (cadr mlist)) listi))))
+
+ 
+  (cond ((null? baselist) finallist)
+         (else
+           (unify (cdr baselist)
+                  (updatealllist finallist (car baselist))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;main function --> uses all the helpful function so that
+;; the final operation can be performed
+
+;;(convert '(27.5 (furlong 1)(fortnight -1)) '((mi 1)(hr -1)))
+;;(0.01023065476190476 ((mi 1) (hr -1)))
+
+(define (convert from to)
+  ;;normalize a,u,v
+  (define (normalize a u v)
+      (/ (* a u) v))
+  ;;check if to and from are compatible using this baselist
+  (define (compatible lista listb)
+    (and (= (getvalue 'kg lista) (getvalue 'kg listb))
+         (= (getvalue 'm lista) (getvalue 'm listb))
+            (= (getvalue 'sec lista) (getvalue 'sec listb))))
+  (let ((a (car from))
+        (frombase (getbaselist (cdr from)))
+        (tobase (getbaselist to)))
+    (let ((fromfl (unify frombase finallist))
+          (tofl (unify tobase finallist)))
+      (cond ((compatible fromfl tofl)
+             (let ((nrm (normalize a (car fromfl) (car tofl))))
+               (append (list nrm) to)))))))
+              
+           

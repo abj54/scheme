@@ -1,0 +1,85 @@
+Anwesh Joshi
+
+
+3.
+Iterative factorial
+
+n         Max depth     No. of pushes
+1          10                 64
+2          10                 99 
+3          10                 134
+4          10                 169 
+5          10                 204
+
+
+a) Maximum depth = 10 (for n >= 1)
+b) Total number of pushes =  35n + 29 (for n >= 1)
+
+
+
+4.
+Recursive factorial
+
+n          Maximum depth     No. of pushes
+1               8                 16
+2               13                48 
+3               18                80
+4               23                112
+5               28                144
+
+
+a) Maximum depth = 5n + 3 (for n >= 1)
+b) Total number of pushes = 32n - 16 (for n>= 1)
+
+
+
+5.
+
+Iterative factotial:
+
+n               Maximum depth           No. of pushes
+1                    17                    70
+2                    20                    107
+3                    23                    144
+4                    26                    181  
+5                    29                    218
+
+Maximum depth: 3n + 14
+Total No. of pushes: 37n + 33
+
+
+Recursive factorial:
+
+n                  Maximum depth         No. of pushes
+1                       11                   18  
+2                       19                   52
+3                       27                   86
+4                       35                   120
+5                       43                   154
+
+Maximum depth: 8n + 3
+Total No. of pushes: 34n - 16
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Problem 1 was fairly straight forward considering the same thing was
+done in hw6 as well. The table was created in the similar way and I
+also wrote the basic type-of and bare-symbol functions as suggested by
+the professor. The only tricky part was editing out
+make-elementary-exp so that we could deal with label taking register
+assignment. For this I simply added an extra cond statement to check
+that it is a label and contains a list (which would be a register), as
+long as I have that I can simply deal with both of those at
+once. During testing phase, I was confused at one point when the
+machine would crash when the input given was a special-form. It was
+due to the fact that order matters in this case. I was dealing with
+variable before the bare-symbol and hence the code treated the
+special-form as variable and crashed the machine. For this simply
+changing the order was sufficient.
+
+Problem 2 for me was a combination of ev-if and ev-sequence. I had
+to add few more checks in 
+

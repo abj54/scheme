@@ -1,0 +1,134 @@
+Anwesh Joshi
+
+1.
+1.
+
+     Ouput       a  a-list pow Input-Stream
+     Stream 
+        ()        0  ()    -- (9 8 7 4 3 6 9 1 7)
+a-list is empty; consume
+        ()       783 (7 8 3) 100 (8 7 4 3 6 9 1 7)
+87+83>= 100; consume
+        ()      8526  (8 5 2 6) 1000 (7 4 3 6 9 1 7)
+87+526<1000; produce
+        (8)    536   (5 2 6)   100  (7 4 3 6 9 1 7)
+87+26>=100; consume
+      (8)     5869   (5 8 6 9)  1000 (4 3 6 9 1 7)
+87+869<1000; produce
+      (85)    869     (8 6 9)   100  (4 3 6 9 1 7)
+87+69>100; consume
+      (85)    9038   (9 0 3 8)  1000 (3 6 9 1 7)
+87+38<1000; produce
+      (859)   38     (0 3 8)    100   (3 6 9 1 7)
+87+38 >= 100; consume
+     (859)    641    (0 6 4 1)   1000   (6 9 1 7)
+87+641<1000; produce
+      (8590)   641    (6 4 1) 100  (6 9 1 7)
+87+41>=100; consume
+      (8590)   6932   (6 9 3 2) 1000 (9 1 7)
+87+932>=1000; consume
+      (8590)   70103  (7 0 1 0 3) 10000 (1 7)
+87+103<10000; produce
+      (85907)  103     (0 1 0 3)   1000  (1 7)
+87+103<1000; produce
+      (859070)  103    (1 0 3)     100    (1 7)
+87+3<100; produce
+     (8590701)  3       (0 3)     10      (1 7)
+87+3>=10; consume
+     (8590701)  117    (1 1 7)    100      (7)
+87+17>=100; produce
+     (8590701)   1779   (1 7 7 9) 1000     ()
+
+input stream is empty, so it returns (1779)
+hence the final ouput = (85907011779)
+
+
+2.  
+1.
+
+2+(1/3)3 = 3
+2+(1/3)(2 + (2/5)3) = 3.0666666...
+2+(1/3)(2 + (2/5)(2 + (3/7)3)) = 3.104761905...
+2+(1/3)(2 + (2/5)(2 + (3/7)(2 + (4/9)3))) = 3.123809524...
+2+(1/3)(2 + (2/5)(2 + (3/7)(2 + (4/9)(2 + (5/11)3)))) = 3.133044733...
+
+It approaches the desired value of pi.
+
+2.
+Input: x
+Add: 3
+--> x+3
+Reciprocal:  1 / (x+3)
+
+fractional linear transformation Matrix:
+|0  1|
+|    |
+|1  3|
+            
+
+
+3. 
+Proof:
+Given two functions:
+  f(x) = (ax + b) / (cx + d)
+  g(x) = (ex + f) / (gx + h)
+
+To prove: fog(x) = AB where A represents f and
+                   B represents g in matrix form
+                   i.e. A = |a b| and B = |e f|
+                            |c d|         |g h|
+
+LHS = fog (composition of two matrices)
+
+    = f((ex + f) / (gx + h))
+
+    = (a((ex + f) / (gx + h)) +b ) / (c ((ex + f) / (gx + h)) + d)
+
+    = ((( aex + af) + (bgx + bh)) / ((ex + f) / (gx + h))) /
+      ((( cex + cf) + (dgx + dh)) / ((ex + f) / (gx + h)))
+
+    = (aex + af + bgx + bh) / ( cex + cf + dgx + dh)
+
+    = ((ae + bg)x + af + bh) / ((ce + dg)x + cf + dh)
+
+RHS = AB
+    = |a b| |e f|
+      |c d| |g h|
+
+    = |ae+bg af+bh|
+      |ce+dg cf+dh|
+
+    Through linear fractional transformation, it is changed as:
+
+     ((ae + bg)x + af + bh) / ((ce + dg) x + cf + dh)
+
+Hence, LHS = RHS proved. 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+For the mult-stream, I used a helper functions that would help me find
+and keep track of pow, a and a-list. I used the built in
+number->string, string->list to convert a number into list of digits
+(a to a-list). I also used char->integer, but this was so that I could
+output integers rather than character. After this, it was just a
+matter of following the algorithm provided in the article. Filling up
+the table for first part helped in understanding the algorithm
+better. The only place I had issue was while trying to prepend 0 on
+a-list. I added integer 0 to a-list which was already full of
+characters and hence I kept getting error while trying to do
+char->integer. I was able to fix it by simply prepending character 0
+and then converting it to integer.
+
+The pi problem seemed more interesting to me as I had to deal with
+matrices than just equations. Creating matrices, adding and
+multiplying them was interesting, but pretty easy as well. The shift
+function would have definitely confused me if we had not talked about
+that in the class. After that, it was just a matter of following the
+algorithm provided again and identifying the consume and produce
+procedures to create the output stream.
+
+For testing, I used the class example to test the output from
+mult-stream. I also used mult-stream on (pi) and 7 to get the desired
+output as I would get from a calculator. I also used (display-n) from
+earlier assignment to check the random values of (pi) and tested it
+with online values.

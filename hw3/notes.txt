@@ -1,0 +1,98 @@
+Anwesh Joshi
+HW 3
+
+Question: why are the quotes necessary?
+
+--> Quotes are necessary so that scheme doesnot go on and try to
+evaluate them which will result in the error when running the code.
+
+___________________________________________________________________
+
+The core task of the application written is to simplify the units
+and perform the normalization task:
+ U = (u/v) * v
+ aU = (av/v) * v
+
+But this is also one of the simplest task to perform after you are
+able to compute the value of u and v since a is simply 'car' of the
+U. The biggest task is hence to be able to compute u and v which can
+be obtained only after being able to translate U and V into respective
+base list. That is the hardest part of the assignment.
+
+Since we are given that the baseunits only comprise of kg, m and sec,
+my idea comprised of keeping track of power of these 3 units.
+Similarly, the given U and V while normalizing may produce different
+coefficients which also had to be tracked. So I decided to use a list
+for this and described it as finallist as:
+
+    (coefficient (kg kg-power) (m m-power) (sec sec-power))
+
+I had to use differenthelpful functions that kept track of the power
+and kept increasing/decreasing it on basis of the power of the unit
+that has been passed i.e. (km 2) --> 1000^2 (m 2). So, the power had
+to be used to compute the new coefficient as well. With getbaselist
+procedure, I obtained a list of units with different coefficient and
+bases which then I had to use in the updatelist proccedure.
+
+      (getbaselist '((m 1) (kg 2))) -->
+      ((1 (m 1)) (1 (kg 2)))
+
+Updatelist has the task of updating the finallist on the basis of
+baselist obtained from getbaselist procedure. And I was able to update
+the finallist by simplyreading 3 values from each sublist in the
+baselist. But that processed failed as soon as I tried to test it with
+the derived units
+
+    (getbaselist '((n 1) (kg 2)))-->
+     ((1 (kg 1) (m 1) (sec -2)) (1 (kg 2)))
+
+Here, my updatelist only worked with 2 kg units and discarded the m
+and sec units completely. To be able to deal with each unit in a list
+was hard part for me as I could not think of how to traverse the list
+and be able to do that. But then I realized that anu unitlist can also
+contain of only 3 sublists with 3 different units (kg, m & sec). So I
+performed a null? test on cddr and cdddr of the list to check if there
+are more units in a list. If there are more unites, deal with each
+unit as a list such that first one contains kg with the coefficient of
+the whole list, while the rest two are the list with 1 as their
+coefficient since using the same coefficient thrice would triple the
+final quantity.
+
+After that, it was simple task to write the convert function, where I
+would transform U and V into U-normalized and V-normalized which are
+two finallists obtained with their respective coefficients i.e. u and
+v. They were then tested if they were compatible with each other i.e.
+they have same power of kg,m and sec for which I have written getvalue
+function. They were then normalized and added to the list with V and
+returned.
+
+
+________________________________________________________________________
+
+The hardest part of the assignment was to be able to play with the
+list.  The knowledge to use car and cdr is extensive as each unit are
+in different formats and may affect the whole procedure flow if a
+unit/power it is looking for it not available. 
+
+To be able to solve this, I wrote a lot of other functions that may be
+seem useless to some as they might prefer traversing a whole list on
+the main function rather than writing individual procedure to do it
+seperately. I didnot want to be doing that so i wrote multiple
+functions where the code may seem repetitive but they complete the
+task they were written to do and I can individually test each of those
+functions.
+
+For testing, I used a basic trick to convert the units back to each other
+i.e.
+        (convert '(27.5 (furlong 1)(fortnight -1)) '((mi 1)(hr -1)))
+        -->(0.01023065476190476 (mi 1) (hr -1))          
+       
+ (convert '(0.01023065476190476 (mi 1) (hr -1)) '((furlong
+ 1)(fortnight -1)))
+-->(27.5 (furlong 1) (fortnight -1))
+
+___________________________________________________________________________
+
+If I had more time, I would work to make my code be less repetitive. I
+would also work to make my code return error messages more extensively
+rather than just exiting the program.

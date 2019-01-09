@@ -1,0 +1,34 @@
+Anwesh Joshi
+
+Part 1 was a lot simpler as soon as the conversion from let to lambda
+and or to if was figured out. While doing let->appl I had an issue
+where the lambda proceudre I generated for let was wrong. But with
+lecture 2 and RSR5 help, I was able to figure it out as I used list
+for the parameters in the lambda body and hence changed it by simply
+using cons instead of list to create lambda body. or->if was a lot
+easier as I just created a make-if object where if the first
+expression is not false, just return that first expression or else
+iterate through the entire expression until a not false expression is
+met and return it. If the entire expression yields false, return
+false.
+
+Part 2 was a lot harder than part 1. compile-apply was implemented
+similarly as compile-application as the only difference here is:
+
+application: (+ 2 3)
+apply: (apply + '(2 3))
+
+So I used the similar logic and used professor's tips in the assigment
+to first compile the procedure + and then the list where that
+procedure is to be used. After that it was simply a matter of binding
+two code together with preserving and compiling the procedure call.
+
+I was unable to complete the map procedure with the time constraint
+and hence couldnot compile s450.scm at all. I did have an idea on how
+that could be done but I was unable to implement it. The biggest
+place that I got lost was while having to iterate the list that has to
+be mapped to new list. I have an idea to maybe create a new procedure
+that would just do that part of iteration but couldnot implement it.
+I actually tried to check if i could may be call apply on each element
+and then cons them but couldnot really find a way to do it in compile
+structure.

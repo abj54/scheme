@@ -1,0 +1,11 @@
+Anwesh Joshi
+
+1. Apart from the fact that most of the primitive procedures are not
+installed, it could not carry out even the simplest procedures like +,
+\. Similarly, it would kick me out if there was any error without
+warning. But a good thing I noticed here was it would remember any
+thing that you would define in the s450 even if you came of of s450
+and went back in. It was fun to figure it out as the variable is
+stored in the environemnt (frame of the environment) and as long as
+anything is performed in the root frame, it also stays there. It can
+be seen by viewing the global environment.

@@ -1,0 +1,51 @@
+Anwesh Joshi
+HW 3
+
+Question: why are the quotes necessary?
+
+--> Quotes are necessary so that scheme doesnot go on and try to
+evaluate them which will result in the error when running the code.
+
+___________________________________________________________________
+
+The core task of the application written is to simplify the units
+and perform the normalization task:
+ U = (u/v) * v
+ aU = (av/v) * v
+
+But this is also one of the simplest task to perform after you are
+able to compute the value of u and v since a is simply 'car' of the
+U. The biggest task is hence to be able to compute u and v which can
+be obtained only after being able to translate U and V into respective
+base list. That is the hardest part of the assignment.
+
+Since we are given that the baseunits only comprise of kg, m and sec,
+my idea comprised of keeping track of power of these 3 units.
+Similarly, the given U and V while normalizing may produce different
+coefficients which also had to be tracked. So I decided to use a list
+for this and described it as finallist as:
+
+    (coefficient (kg kg-power) (m m-power) (sec sec-power))
+
+I had to use differenthelpful functions that kept track of the power
+and kept increasing/decreasing it on basis of the power of the unit
+that has been passed i.e. (km 2) --> 1000^2 (m 2). So, the power had
+to be used to compute the new coefficient as well. With getbaselist
+procedure, I obtained a list of units with different coefficient and
+bases which then I had to use in the updatelist proccedure.
+
+      (getbaselist '((m 1) (kg 2))) -->
+      ((1 (m 1)) (1 (kg 2)))
+
+Updatelist has the task of updating the finallist on the basis of
+baselist obtained from getbaselist procedure. And I was able to update
+the finallist by simplyreading 3 values from each sublist in the
+baselist. But that processed failed as soon as I tried to test it with
+the derived units
+
+    (getbaselist '((n 1) (kg 2)))-->
+     ((1 (kg 1) (m 1) (sec -2)) (1 (kg 2)))
+
+Here, mu updatelist only worked with 2 kg units and discarded the m and
+sec units completely. To be able to deal with each unit in a list was
+hard part for me as I could

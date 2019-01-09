@@ -1,0 +1,43 @@
+((env continue)
+ (env proc argl continue temp1 temp2 val)
+ (proc argl val)
+ (
+  (assign val (const 2))
+  (perform (op define-variable!) (const a) (reg val) (reg env))
+  (assign val (const a))
+  (assign val (const 3))
+  (perform (op define-variable!) (const b) (reg val) (reg env))
+  (assign val (const b))
+  (assign proc (op lookup-variable-value) (const +) (reg env))
+  (save continue)
+  (save proc)
+  (assign proc (op lookup-variable-value) (const list) (reg env))
+  (assign val (op lookup-variable-value) (const b) (reg env))
+  (assign argl (op list) (reg val))
+  (assign val (op lookup-variable-value) (const a) (reg env))
+  (assign argl (op cons) (reg val) (reg argl))
+  (test (op primitive-procedure?) (reg proc))
+  (branch (label primitive-branch1))
+ compiled-branch2
+  (assign continue (label proc-return4))
+  (assign val (op compiled-procedure-entry) (reg proc))
+  (goto (reg val))
+ proc-return4
+  (assign argl (reg val))
+  (goto (label after-call3))
+ primitive-branch1
+  (assign argl (op apply-primitive-procedure) (reg proc) (reg argl))
+ after-call3
+  (restore proc)
+  (restore continue)
+  (test (op primitive-procedure?) (reg proc))
+  (branch (label primitive-branch5))
+ compiled-branch6
+  (assign val (op compiled-procedure-entry) (reg proc))
+  (goto (reg val))
+ primitive-branch5
+  (assign val (op apply-primitive-procedure) (reg proc) (reg argl))
+  (goto (reg continue))
+ after-call7
+ )
+)

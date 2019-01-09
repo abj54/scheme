@@ -1,0 +1,4 @@
+(() (temp1) (temp1) ((assign temp1 (const (3 5)))))
+==> 
+(Error Null symbol name)
+==> 

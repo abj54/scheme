@@ -1,0 +1,18 @@
+(define (double x)
+  (+ x x))
+(define (halve x)
+  (/ x 2))
+(define (fast-mult a b)
+  (cond ((or (= a 0) (= b 0)) 0)
+        ((= a 1) b)
+        ((= a -1) (- b))
+        ((= (remainder a 2) 0) (double (fast-mult (halve a) b)))
+        (else (+ b (fast-mult (- a 1) b)))))
+
+        
+(fast-mult 2 3)
+(fast-mult 2 0)
+(fast-mult 0 2)
+(fast-mult 6 -1)
+(fast-mult -7 8)
+(fast-mult 12 -18)

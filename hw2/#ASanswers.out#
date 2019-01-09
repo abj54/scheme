@@ -1,0 +1,56 @@
+Welcome to UMB Scheme, version 3.2  Copyright (c) 1988,1996 William R Campbell.
+UMB Scheme comes with ABSOLUTELY NO WARRANTY. This is free software and
+you are free to redistribute it under certain conditions.
+
+1;95;0cSee the UMB Scheme Release Notes for details. Type Control-d to exit.
+
+Loading /home/offner/tools/lib/prelude.scheme...
+
+==> 
+is-list?
+==> 
+my-reverse
+==> 
+filter
+==> 
+same-parity
+==> 
+(2 4)
+==> 
+square-list
+==> 
+square-list
+==> 
+my-for-each
+==> 
+1
+2
+3
+()
+==> 
+my-equal?
+==> 
+#t
+==> 
+#f
+==> 
+every?
+==> 
+even?
+==> 
+#t
+==> 
+element-of?
+==> 
+unordered-union-set
+==> 
+(2 3 4 8 5 6 7)
+==> 
+ordered-union-set
+==> 
+(1 2 3 4 5 7 11 12 15)
+==> 
+remove-val
+==> 
+(2 3 4 2 2)
+==> 

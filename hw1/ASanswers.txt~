@@ -1,0 +1,241 @@
+Anwesh Joshi
+CS450
+Homework 1
+butterfyl 
+---> 1.6
+
+Here, (sqr-iter) procedure recursively calls itself on an improved
+value of guess again and again until a satisfied value is
+evaluated. If statement is used as:
+(if (predicate) #t-statement #f-statement),
+here #t-statement is evaluated and returned only when
+the predicate is true and when the predicate is false, then only
+#f-statement is evaluated and returned. Hence, during (sqr-iter)
+procedure, the recursive (sqr-iter) is called only when the predicate
+is false i.e. the symbol (guess) is not good enough. But once the
+value of guess is good, it is returned and the recursive expression is
+no more evaluated.
+
+But the new-if statement is user-defined procedure, and hence follows
+applicative-order evaluation. Here,
+(new-if (predicate) #t-statement #f-statement),
+both the #t-statement and the #f-statement are evaluated despite the
+nature of predicate. This results in the repeated evaluation of
+recursive expression (sqr-iter (improve guess x) x) infinitely.  And
+hence the error message of Stack Overflow is returned.
+
+
+---> 1.12
+(define (p r e)
+  (cond ((or (= e 0) (=e r)) 1)
+        ((> e r) "Need: e<=r")
+        (else (+ (p (- r 1) (- e 1)) (p (- r 1) e)))))
+
+For this problem, I used the recursive procedure to calculate the the
+eth element on rth row of Pascal's triangle. First I checked if the
+element if first or last element in row (0 or r respectively), the
+value will be 1. Or else, it is the sum of 2 elements on the earlier
+row at the same and 1 position before it i.e. eth element and (e-1)th
+element of r-1 row.  And if e > r, then I let the user know that e has
+ti be equal or less than r.  For testing, I put the code and tests in
+1.12.scm and obtained 1.12.out by running the code: scheme <1.12.scm >
+1.12.out
+
+Tests in 1.12.scm:
+(p 0 0)
+(p 0 2)
+(p 2 1)
+(p 4 2)
+
+
+Results in 1.12.out:
+==>
+p
+==>
+1
+==>
+"Need: e<=r"
+==>
+2
+==>
+6
+==>
+
+
+---> 1.17
+
+For this problem, I first introduced double and halve procedure which
+double and halves the provided number.  For the (fast-mult a b)
+procedure, I first check if any of the number is 0 such that the
+product is also 0. Then I check if any of the number has been reduced
+to 1, so that the other number would be the answer. I also had to look
+at the negative number case and hence, returned negative of the other
+number when one of the number was -1. Finally to compute the
+multiplication I follow the given two rules:
+
+1.If the number is even, half it and call fast-mult on it and the
+other number. Then double the result. While halving the number, it
+would ultimately reduce to 1 and hence the other number is returned.
+eg: 4 X 4 = 2 * ( (4 / 2) X 4)
+
+2. But if the number is odd, it cannot be halved. So, we will make the
+number even by substracting 1 from it and then calling (fast-mult) on
+that substracted number and the other number, and then returning the
+sum of the other number and the evaluated value from (fast-mult)
+procedure.
+eg: 3 X 4 = 4 + ( ( 3- 1 ) * 4)
+
+Rule 1 and 2 will go back and again as the number will keep chaning to
+odd and even when you substract the number by 1 and halving the
+number.
+
+(define (double x)
+  (+ x x))
+(define (halve x)
+  (/ x 2))
+(define (fast-mult a b)
+  (cond ((or (= a 0) (= b 0)) 0)
+        ((= a 1) b)
+        ((= a -1) (- b))
+        ((= (remainder a 2) 0) (double (fast-mult (halve a) b)))
+        (else (+ b (fast-mult (- a 1) b)))))
+
+
+a and b can be replaced with each other and the answer would be same
+as (a x b) = (b x a). Also, with halving the number and
+by recursively calling the (fast-mult) procedure, it becomes
+logarithmic to a.
+
+Test in 1.17.scm:
+(fast-mult 2 3)
+(fast-mult 2 0)
+(fast-mult 0 2)
+(fast-mult 6 -1)
+(fast-mult -7 8)
+(fast-mult -12 -18)
+
+
+Result in 1.17.out:
+==>
+double
+==>
+halve
+==>
+fast-mult
+==>
+6
+==>
+0
+==>
+0
+==>
+-6
+==>
+-56
+==>
+216
+==>
+
+
+---> 1.20
+(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))
+
+Normal-order evaluation: [Count indicated total number of times
+                          remainder has been used]
+                          
+(gcd 246 40)
+=(if (= 40 0) 246 (gcd 40 (remainder 246 40)))
+
+= (gcd 40 (remiander 246 40))
+
+=(if (= (remainder 246 40) 0) 40
+      (gcd (remainder 246 40) (remainder 40
+      (remainder 246 40))))
+
+= (if (= 6 0) 40 (gcd (remainder 246 40) (remainder 40
+      (remainder 246 40))))      ;;;;; Count: 1
+
+= (gcd (remainder 246 40) (remainder 40 (remainder 246 40)))) = (if (=
+      (remainder 40 (remainder 246 40)) 0) (remainder 246 40) (gcd
+      (remainder 40 (remainder 246 40)) (remainder (remainder 246 40)
+      ((remainder 40 (remainder 246 40))))))
+
+=( if (= 4 0) (remainder 246 40) (gcd (remainder
+      40 (remainder 246 40)) (remainder (remainder 246 40) ((remainder 40
+      (remainder 246 40)))))) ;;;;Count:1+2
+
+=(gcd (remainder 40 (remainder 246 40)) (remainder
+       (remainder 246 40) ((remainder 40 (remainder 246 40)))))
+
+=(if (= (remainder (remainder 246 40) ((remainder 40 (remainder 246
+      40)))) 0) (remainder 40 (remainder 246 40)) (gcd (remainder
+      (remainder 246 40) ((remainder 40 (remainder 246 40))))
+      (remainder (remainder 40 (remainder 246 40)) (remainder
+      (remainder 246 40) ((remainder 40 (remainder 246 40)))))))
+
+=( if (= 2 0) (remainder 40 (remainder 246 40)) (gcd (remainder
+             (remainder 246 40) ((remainder 40 (remainder 246 40))))
+             (remainder (remainder 40 (remainder 246 40)) (remainder
+             (remainder 246 40) ((remainder 40 (remainder 246
+             40))))))) ;;;;Count: 1+2+4
+                               
+=(gcd (remainder (remainder 246 40) ((remainder 40 (remainder 246
+                       40)))) (remainder (remainder 40 (remainder 246
+                       40)) (remainder (remainder 246 40) ((remainder
+                       40 (remainder 246 40))))))
+
+= (if (= (remainder (remainder 40 (remainder 246 40)) (remainder
+       (remainder 246 40) ((remainder 40 (remainder 246 40))))) 0)
+       (remainder (remainder 246 40) ((remainder 40 (remainder 246
+       40)))) (gcd (remainder (remainder 40 (remainder 246 40))
+       (remainder (remainder 246 40) ((remainder 40 (remainder 246
+       40))))) (remainder (remainder (remainder 246 40) ((remainder 40
+       (remainder 246 40)))) (remainder (remainder 40 (remainder 246
+       40)) (remainder (remainder 246 40) ((remainder 40 (remainder
+       246 40))))))))
+
+=( if (= 0 0) (remainder (remainder 246 40) ((remainder 40 (remainder
+       246 40)))) (gcd (remainder (remainder 40 (remainder 246 40))
+       (remainder (remainder 246 40) ((remainder 40 (remainder 246
+       40))))) (remainder (remainder (remainder 246 40) ((remainder 40
+       (remainder 246 40)))) (remainder (remainder 40 (remainder 246
+       40)) (remainder (remainder 246 40) ((remainder 40 (remainder
+       246 40)))))))) ;;;;;Count: 1+2+4+7
+
+=(remainder (remainder 246 40) ((remainder 40 (remainder 246 40))))
+=2    ;;;;Count:1+2+4+7+4 = 18
+
+
+== Total number of times remainder used = 18
+
+
+Applicative order evaluation:
+
+(gcd 246 40)
+=(if (= 40 0) 246 (gcd 40 (remainder 246 40)))
+
+=(gcd 40 (remainder 246 40))
+= (gd 40 6) ;;; Count: 1
+=(if (= 6 0) 40 (gcd 6 (remainder 40 6)))
+
+= (gcd 6 (remainder 40 6))
+=(gcd 6 4) ;;; Count:2
+=(if (= 4 0) 6 (gcd 4 (remainder 6 4)))
+
+=(gcd 4 (remainder 6 4))
+=(gcd 4 2) ;;;Count: 3
+=(if (= 2 0) 4 (gcd 2 (remainder 4 2)))
+
+=(gcd 2 (remainder 4 2))
+=(gcd 2 0) ;;;Count: 4
+= 2
+
+==Total remainder operation evaluated: 4
+
+
+== Due to repeated evaluation needed in Normal order evaluation,
+remainder operation has been used a 18 times where as same operation
+is used just 4 times in Applicative order evaluation.
