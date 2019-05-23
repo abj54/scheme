@@ -1,3 +1,3 @@
 # scheme
 
-scheme cs 450 hws collection 
+cs450 hw
